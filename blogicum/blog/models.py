@@ -11,8 +11,8 @@ class Category(CoreModel):
     slug = models.SlugField(
         unique=True,
         verbose_name='Идентификатор',
-        help_text='''Идентификатор страницы для URL; разрешены символы
-        латиницы, цифры, дефис и подчёркивание.'''
+        help_text='''Идентификатор страницы для URL; 
+        разрешены символы латиницы, цифры, дефис и подчёркивание.'''
     )
 
     class Meta:
@@ -20,7 +20,7 @@ class Category(CoreModel):
         verbose_name_plural = 'Категории'
 
     def __str__(self):
-        return self.title 
+        return self.title
 
 
 class Location(CoreModel):
@@ -37,14 +37,14 @@ class Location(CoreModel):
         verbose_name_plural = 'Местоположения'
 
     def __str__(self):
-        return self.name 
+        return self.name
 
 
 class Post(CoreModel):
     text = models.TextField(blank=False, verbose_name='Текст')
     pub_date = models.DateTimeField(
         verbose_name='Дата и время публикации',
-        help_text='''Если установить дату и время в будущем —
+        help_text='''Если установить дату и время в будущем — 
         можно делать отложенные публикации.'''
     )
     category = models.ForeignKey(
@@ -71,4 +71,4 @@ class Post(CoreModel):
         verbose_name_plural = 'Публикации'
 
     def __str__(self):
-        return self.title 
+        return self.title

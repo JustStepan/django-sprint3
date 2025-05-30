@@ -1,12 +1,23 @@
-from django.db import models
 from django.contrib.auth import get_user_model
-from core.models import CoreModel
+from django.db import models
+from django.utils import timezone
+
+from core.models import CoreModel, TitleModel
 
 
 USER = get_user_model()
+M_CHAR_LENGHT = 256
 
 
-class Category(CoreModel):
+class IsPublished(models.Manager):
+    def published(self):
+        return super().get_queryset().filter(
+            pub_date__lte=timezone.now(),
+            is_published=True,
+        )
+
+
+class Category(CoreModel, TitleModel):
     description = models.TextField(blank=False, verbose_name='Описание')
     slug = models.SlugField(
         unique=True,
@@ -14,6 +25,8 @@ class Category(CoreModel):
         help_text='Идентификатор страницы для URL; '
         'разрешены символы латиницы, цифры, дефис и подчёркивание.'
     )
+
+    objects = IsPublished()
 
     class Meta:
         verbose_name = 'категория'
@@ -25,12 +38,13 @@ class Category(CoreModel):
 
 class Location(CoreModel):
     name = models.CharField(
-        max_length=256,
+        max_length=M_CHAR_LENGHT,
         blank=False,
         default='Планета Земля',
         verbose_name="Название места",
     )
-    title = None
+
+    objects = IsPublished()
 
     class Meta:
         verbose_name = 'местоположение'
@@ -40,7 +54,7 @@ class Location(CoreModel):
         return self.name
 
 
-class Post(CoreModel):
+class Post(CoreModel, TitleModel):
     text = models.TextField(blank=False, verbose_name='Текст')
     pub_date = models.DateTimeField(
         verbose_name='Дата и время публикации',
@@ -66,9 +80,12 @@ class Post(CoreModel):
         verbose_name='Местоположение',
     )
 
+    objects = IsPublished()
+
     class Meta:
         verbose_name = 'публикация'
         verbose_name_plural = 'Публикации'
+        ordering = ('-id',)
 
     def __str__(self):
         return self.title
